@@ -1,0 +1,19 @@
+{
+  "name": "loopback-slug-mixin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nxtlvlgg/loopback-slug-mixin.git"
+  },
+  "author": "Josh Elias",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nxtlvlgg/loopback-slug-mixin/issues"
+  },
+  "homepage": "https://github.com/nxtlvlgg/loopback-slug-mixin#readme"
+}
