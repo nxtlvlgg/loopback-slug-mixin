@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/nxtlvlgg/loopback-slug-mixin/issues"
   },
-  "homepage": "https://github.com/nxtlvlgg/loopback-slug-mixin#readme"
+  "homepage": "https://github.com/nxtlvlgg/loopback-slug-mixin#readme",
+  "mixinName" : "Validate"
 }
