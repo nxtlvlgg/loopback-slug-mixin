@@ -16,5 +16,10 @@
     "url": "https://github.com/nxtlvlgg/loopback-slug-mixin/issues"
   },
   "homepage": "https://github.com/nxtlvlgg/loopback-slug-mixin#readme",
-  "mixinName" : "Validate"
+  "mixinName": "Validate",
+  "dependencies": {
+    "async": "^2.0.0-rc.2",
+    "bluebird": "^3.3.4",
+    "xloop": "git://github.com/nxtlvlgg/xloop.git"
+  }
 }
