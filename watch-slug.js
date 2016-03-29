@@ -1,6 +1,6 @@
 var xloop = require("xloop");
 var resultCrawler = xloop.resultCrawler;
-var packageJSON = require("./packageJSON");
+var packageJSON = require("./package");
 
 
 function watchSlug(Model, mixinOptions, ctx) {
