@@ -1,5 +1,6 @@
 var xloop = require("xloop");
 var resultCrawler = xloop.resultCrawler;
+var packageJSON = require("./packageJSON");
 
 
 function saveForeignKey(Model, mixinOptions, ctx) {
