@@ -1,12 +1,9 @@
-var async = require("async");
 var Promise = require("bluebird");
 var xloop = require("xloop");
-var resultCrawler = xloop.resultCrawler;
 var reqCache = xloop.reqCache;
 var watchSlug =  require("./watch-slug");
 var saveForeignKey =  require("./save-foreign-key");
-var slugFuncs = require("./slug-funcs");
-var packageJSON = require("./package");
+
 
 
 
@@ -27,6 +24,7 @@ module.exports = function(Model, mixinOptions) {
     });
 
 
+
     // Ensure the request object on every type of hook
     Model.beforeRemote('**', function(ctx, modelInstance, next) {
         reqCache.setRequest(ctx);
@@ -36,24 +34,20 @@ module.exports = function(Model, mixinOptions) {
 
     Model.observe("access", function(ctx, next) {
         ctx.req = reqCache.getRequest();
-        async.series([
-            findParent(Model, ctx)
-        ], next);
+        watchSlug(Model, mixinOptions, ctx, next);
     });
 
 
     Model.observe("before save", function(ctx, next) {
         ctx.req = reqCache.getRequest();
-        return async.series([
-            watchSlug(Model, mixinOptions, ctx)
-        ], next);
+        return watchSlug(Model, mixinOptions, ctx, next);
     });
 
 
     Model.observe("after save", function(ctx, next) {
-        return saveForeignKey(ctx, foreignKeyName, next);
+        ctx.req = reqCache.getRequest();
+        return saveForeignKey(Model, mixinOptions, ctx, foreignKeyName, next);
     });
-
 
 
 
@@ -108,15 +102,3 @@ module.exports = function(Model, mixinOptions) {
         }
     );
 };
-
-
-function findParent(Model, ctx) {
-    return function(finalCb) {
-
-        if(!ctx.query.where || typeof ctx.query.where.slug !== "string") {
-            return finalCb();
-        }
-
-        return Model.findBySlug(ctx.query.where.slug, ctx.query, finalCb);
-    }
-}
