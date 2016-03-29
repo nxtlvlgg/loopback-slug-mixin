@@ -1,6 +1,7 @@
 var xloop = require("xloop");
 var resultCrawler = xloop.resultCrawler;
 var packageJSON = require("./package");
+var slugFuncs = require("./slug-funcs");
 
 
 function watchSlug(Model, mixinOptions, ctx) {
@@ -15,10 +16,9 @@ function watchSlug(Model, mixinOptions, ctx) {
 
 
 function primitiveHandler(state, mixinOptions, finalCb) {
-    var model = state.ctx.model;
-    var slugOptions = {};
 
     // Get options from modelConfig
+    var slugOptions = {};
     var modelSlugOptions = state.modelProperties[mixinOptions.mixinName];
     if (typeof modelSlugOptions === "object") {
         for (var key in modelSlugOptions) {
@@ -37,7 +37,6 @@ function primitiveHandler(state, mixinOptions, finalCb) {
     if (state.ctx.isNewInstance) {
         return createSlug(state.ctx.instance, state, slugOptions, finalCb);
     }
-
 
     // Try to find slug based on this key
     var Slug = state.models.slug;
