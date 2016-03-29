@@ -4,6 +4,7 @@ var xloop = require("xloop");
 var resultCrawler = xloop.resultCrawler;
 var reqCache = xloop.reqCache;
 var watchSlug =  require("./watch-slug");
+var saveForeignKey =  require("./save-foreign-key");
 var slugFuncs = require("./slug-funcs");
 var packageJSON = require("./package");
 
@@ -11,10 +12,11 @@ var packageJSON = require("./package");
 
 module.exports = function(Model, mixinOptions) {
 
+    var ObjectId = Model.dataSource.connector.getDefaultIdType();
+    var foreignKeyName = Model.definition.name+"Id";
+
     Model.dataSource.once("connected", function() {
-        var ObjectId = Model.dataSource.connector.getDefaultIdType();
         var Slug = Model.app.models.slug;
-        var foreignKeyName = Model.definition.name+"Id";
 
         // Add relation to slug model
         Model.hasMany(Slug, {as: "slugs", foreignKey: foreignKeyName});
@@ -49,7 +51,7 @@ module.exports = function(Model, mixinOptions) {
 
 
     Model.observe("after save", function(ctx, next) {
-        return saveForeignKey(ctx, next);
+        return saveForeignKey(ctx, foreignKeyName, next);
     });
 
 
