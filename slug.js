@@ -34,7 +34,7 @@ module.exports = function(Model, mixinOptions) {
 
     Model.observe("access", function(ctx, next) {
         ctx.req = reqCache.getRequest();
-        watchSlug(Model, mixinOptions, ctx, next);
+        return findParent(Model, ctx, next);
     });
 
 
@@ -102,3 +102,14 @@ module.exports = function(Model, mixinOptions) {
         }
     );
 };
+
+
+
+function findParent(Model, ctx, finalCb) {
+
+    if (!ctx.query.where || typeof ctx.query.where.slug !== "string") {
+        return finalCb();
+    }
+
+    return Model.findBySlug(ctx.query.where.slug, ctx.query, finalCb);
+}
