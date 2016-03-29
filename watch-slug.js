@@ -4,14 +4,12 @@ var packageJSON = require("./package");
 var slugFuncs = require("./slug-funcs");
 
 
-function watchSlug(Model, mixinOptions, ctx) {
-    return function(finalCb) {
+function watchSlug(Model, mixinOptions, ctx, finalCb) {
 
-        mixinOptions.mixinName = packageJSON.mixinName;
-        mixinOptions.primitiveHandler = primitiveHandler;
+    mixinOptions.mixinName = packageJSON.mixinName;
+    mixinOptions.primitiveHandler = primitiveHandler;
 
-        return resultCrawler.crawl(Model, mixinOptions, ctx, null, finalCb);
-    }
+    return resultCrawler.crawl(Model, mixinOptions, ctx, null, finalCb);
 }
 
 
@@ -55,7 +53,7 @@ function primitiveHandler(state, mixinOptions, finalCb) {
             return createSlug(state.ctx.instance, state, slugOptions, finalCb);
         }
 
-        return updateSlug(slug, state.ctx.instance, state, slugOptions, slugCb);
+        return updateSlug(slug, state.ctx.instance, state, slugOptions, finalCb);
     });
 
 

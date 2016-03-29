@@ -32,13 +32,10 @@ function primitiveHandler(state, mixinOptions, finalCb) {
             id: true
         }
     }, function(err, slug) {
-        console.log("found slug", err, slug);
         if(err) return finalCb(err);
 
-        console.log("updating foreguinKEyname", mixinOptions.foreignKeyName);
-        return slug.updateAttribute(mixinOptions.foreignKeyName, function(err) {
-            console.log("updated slugs");
-            if(err) return finalCb(err);
+        return slug.updateAttribute(state.foreignKeyName, state.ctx.instance.id, function(err) {
+            return finalCb(err);
         });
     });
 }
