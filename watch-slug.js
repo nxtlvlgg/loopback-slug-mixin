@@ -43,7 +43,7 @@ function primitiveHandler(state, mixinOptions, finalCb) {
     var query = {
         where: {
             baseKey: state.key,
-            parentModelName: Model.definition.name
+            parentModelName: state.modelName
         },
         fields: fields
     };
