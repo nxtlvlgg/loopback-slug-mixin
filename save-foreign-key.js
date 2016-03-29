@@ -7,7 +7,7 @@ var packageJSON = require("./package");
 function saveForeignKey(Model, mixinOptions, ctx, foreignKeyName, finalCb) {
 
     // Only update the foreignKey if this instance is new
-    if (!state.ctx.isNewInstance) {
+    if (!ctx.isNewInstance) {
         return finalCb();
     }
 
