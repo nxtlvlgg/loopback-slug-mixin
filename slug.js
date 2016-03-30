@@ -2,12 +2,16 @@ var Promise = require("bluebird");
 var path = require("path");
 var xloop = require("xloop");
 var reqCache = xloop.reqCache;
-var packageJSON = require("./package");
 var watchSlug =  require("./watch-slug");
 var saveForeignKey =  require("./save-foreign-key");
 
 
-var destroyOnDeleteKey = require(path.join(__dirname, "node_modules", "loopback-destroy-on-delete-mixin", "package")).mixinName;
+// Get package.json for loopback-destroy-on-delete-mixin
+var mixinPath = require.resolve("loopback-destroy-on-delete-mixin");
+var mixinElems = mixinPath.split(path.sep);
+mixinElems[mixinElems.length-1] = "package";
+var packagePath = mixinElems.join(path.sep);
+var destroyOnDeleteKey = require(packagePath).mixinName;
 
 
 module.exports = function(Model, mixinOptions) {
