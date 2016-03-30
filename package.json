@@ -20,6 +20,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.2",
     "bluebird": "^3.3.4",
-    "xloop": "git://github.com/nxtlvlgg/xloop.git"
+    "xloop": "git://github.com/nxtlvlgg/xloop.git",
+    "loopback-destroy-on-delete-mixin": "git://github.com/nxtlvlgg/loopback-destroy-on-delete-mixin.git"
   }
 }

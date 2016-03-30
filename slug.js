@@ -1,10 +1,13 @@
 var Promise = require("bluebird");
+var path = require("path");
 var xloop = require("xloop");
 var reqCache = xloop.reqCache;
+var packageJSON = require("./package");
 var watchSlug =  require("./watch-slug");
 var saveForeignKey =  require("./save-foreign-key");
 
 
+var destroyOnDeleteKey = require(path.join(".", "node_modules", "loopback-destroy-on-delete-mixin", "package.json"));
 
 
 module.exports = function(Model, mixinOptions) {
@@ -12,17 +15,27 @@ module.exports = function(Model, mixinOptions) {
     var ObjectId = Model.dataSource.connector.getDefaultIdType();
     var foreignKeyName = Model.definition.name+"Id";
 
+
     Model.dataSource.once("connected", function() {
         var Slug = Model.app.models.slug;
 
         // Add relation to slug model
-        Model.hasMany(Slug, {as: "slugs", foreignKey: foreignKeyName});
+        Model.hasMany(Slug, {
+            as: "slugs",
+            foreignKey: foreignKeyName
+        });
+
+        // Add destroy-on-delete as mixin to parent Model
+        Model.mixin(destroyOnDeleteKey);
+        Model.relations.slugs.options[destroyOnDeleteKey] = true
 
         // Add properties and relations to slug model
         Slug.defineProperty(foreignKeyName, { type: ObjectId });
-        Slug.belongsTo(Model, {as: Model.definition.name, foreignKey: foreignKeyName});
+        Slug.belongsTo(Model, {
+            as: Model.definition.name,
+            foreignKey: foreignKeyName
+        });
     });
-
 
 
     // Ensure the request object on every type of hook
