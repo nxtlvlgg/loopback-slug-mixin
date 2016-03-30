@@ -16,11 +16,11 @@ var destroyOnDeleteKey = require(packagePath).mixinName;
 
 module.exports = function(Model, mixinOptions) {
 
-    var ObjectId = Model.dataSource.connector.getDefaultIdType();
     var foreignKeyName = Model.definition.name+"Id";
 
 
     Model.dataSource.once("connected", function() {
+        var ObjectId = Model.dataSource.connector.getDefaultIdType();
         var Slug = Model.app.models.slug;
 
         // Add relation to slug model
@@ -31,7 +31,7 @@ module.exports = function(Model, mixinOptions) {
 
         // Add destroy-on-delete as mixin to parent Model
         Model.mixin(destroyOnDeleteKey);
-        Model.relations.slugs.options[destroyOnDeleteKey] = true
+        Model.relations.slugs.options[destroyOnDeleteKey] = true;
 
         // Add properties and relations to slug model
         Slug.defineProperty(foreignKeyName, { type: ObjectId });
