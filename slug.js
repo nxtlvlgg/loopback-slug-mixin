@@ -7,7 +7,7 @@ var watchSlug =  require("./watch-slug");
 var saveForeignKey =  require("./save-foreign-key");
 
 
-var destroyOnDeleteKey = require(path.join(".", "node_modules", "loopback-destroy-on-delete-mixin", "package.json"));
+var destroyOnDeleteKey = require(path.join(".", "node_modules", "loopback-destroy-on-delete-mixin", "package.json")).mixinName;
 
 
 module.exports = function(Model, mixinOptions) {
