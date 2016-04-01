@@ -5,7 +5,7 @@ var slugFuncs = require("./slug-funcs");
 
 
 function watchSlug(Model, mixinOptions, ctx, finalCb) {
-
+    console.log("watching slugs");
     mixinOptions.mixinName = packageJSON.mixinName;
     mixinOptions.primitiveHandler = primitiveHandler;
 
@@ -38,89 +38,89 @@ function primitiveHandler(state, mixinOptions, finalCb) {
 
     // Try to find slug based on this key
     var Slug = state.models.slug;
-    var fields = {id: true};
-    fields[state.key] = true;
     var query = {
         where: {
             baseKey: state.key,
             parentModelName: state.modelName
         },
-        fields: fields
+        fields: {
+            id: true,
+            linked: true,
+            slug:true
+        }
     };
     return Slug.findOne(query, function (err, slug) {
         if (err) return finalCb(err);
         if (!slug) {
+            console.log("no slug found with query");
             return createSlug(state.ctx.instance, state, slugOptions, finalCb);
         }
-
         return updateSlug(slug, state.ctx.instance, state, slugOptions, finalCb);
     });
+}
 
+function createSlug(instance, state, slugOptions, finalCb) {
 
-    function createSlug(instance, state, slugOptions, finalCb) {
+    var linked = (  slugOptions.linked === undefined
+    || slugOptions.linked === null  )
+        ? true : slugOptions.linked;
+    var slug = (!linked && typeof slugOptions.slug === "string")
+        ? slugOptions.slug : slugify(state.data);
 
-        var linked = (  slugOptions.linked === undefined
-        || slugOptions.linked === null  )
-            ? true : slugOptions.linked;
-        var slug = (!linked && typeof slugOptions.slug === "string")
-            ? slugOptions.slug : slugify(state.data);
-
-        // Add slug modifiers
-        var prefixFunc = slugFuncs[slugOptions.prefixFunc];
-        if (typeof prefixFunc === "function") {
-            slug = prefixFunc(instance) + slug;
-        } else if (typeof slugOptions.prefix === "string") {
-            slug = slugOptions.prefix + slug;
-        }
-
-        return instance.slugs.create({
-            slug: slug,
-            linked: linked,
-            baseKey: state.key,
-            parentModelName: state.modelName
-        }, finalCb);
+    // Add slug modifiers
+    var prefixFunc = slugFuncs[slugOptions.prefixFunc];
+    if (typeof prefixFunc === "function") {
+        slug = prefixFunc(instance) + slug;
+    } else if (typeof slugOptions.prefix === "string") {
+        slug = slugOptions.prefix + slug;
     }
 
-    function updateSlug(slugInstance, instance, state, slugOptions, finalCb) {
-        var changes = {};
+    return instance.slugs.create({
+        slug: slug,
+        linked: linked,
+        baseKey: state.key,
+        parentModelName: state.modelName
+    }, finalCb);
+}
 
-        // Did the user include linked option?
-        var linked;
-        if (slugOptions.linked !== undefined || slugOptions.linked !== null) {
-            linked = slugOptions.linked
-        }
+function updateSlug(slugInstance, instance, state, slugOptions, finalCb) {
+    var changes = {};
+    var linked = slugInstance.linked || true;
 
-        // Has the linked value changed?
-        if (linked !== undefined && linked !== slugInstance.linked) {
-            changes.linked = linked;
-        } else if (linked === undefined) {
-            linked = slugInstance.linked;
-        }
-
-        // Has the slug changed?
-        var slug = slugify(state.data);
-
-        // Add slug modifiers
-        var prefixFunc = slugFuncs[slugOptions.prefixFunc];
-        if (typeof prefixFunc === "function") {
-            slug += prefixFunc(instance);
-        } else if (typeof slugOptions.prefix === "string") {
-            slug += slugOptions.prefix;
-        }
-
-        if (linked && (slug !== slugInstance.slug)) {
-            changes.slug = slug;
-        } else if (!linked && (slugOptions.slug !== slugInstance.slug)) {
-            changes.slug = slugOptions.slug;
-        }
-
-        // Do we need to apply updates?
-        if (Object.keys(changes).length < 1) {
-            return finalCb();
-        }
-
-        return slugInstance.updateAttributes(changes, finalCb);
+    // Did the user include linked option?
+    if (slugOptions && typeof slugOptions.linked === "boolean") {
+        linked = slugOptions.linked
     }
+
+    // Has the linked value changed?
+    if (linked !== slugInstance.linked) {
+        changes.linked = linked;
+    } else {
+        linked = slugInstance.linked;
+    }
+
+    // Has the slug changed?
+    var slug = slugify(state.data);
+
+    // Add slug modifiers
+    var prefixFunc = slugFuncs[slugOptions.prefixFunc];
+    if (typeof prefixFunc === "function") {
+        slug += prefixFunc(instance);
+    } else if (typeof slugOptions.prefix === "string") {
+        slug += slugOptions.prefix;
+    }
+
+    if (linked && (slug !== slugInstance.slug)) {
+        changes.slug = slug;
+    } else if (!linked && (slugOptions.slug !== slugInstance.slug)) {
+        changes.slug = slugOptions.slug;
+    }
+
+    // Do we need to apply updates?
+    if (Object.keys(changes).length < 1) {
+        return finalCb();
+    }
+    return slugInstance.updateAttributes(changes, finalCb);
 }
 
 
