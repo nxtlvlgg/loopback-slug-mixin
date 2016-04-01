@@ -5,7 +5,7 @@ var slugFuncs = require("./slug-funcs");
 
 
 function watchSlug(Model, mixinOptions, ctx, finalCb) {
-    console.log("watching slugs");
+
     mixinOptions.mixinName = packageJSON.mixinName;
     mixinOptions.primitiveHandler = primitiveHandler;
 
