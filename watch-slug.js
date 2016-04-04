@@ -1,4 +1,5 @@
 var xloop = require("xloop");
+var async = require("async");
 var resultCrawler = xloop.resultCrawler;
 var packageJSON = require("./package");
 var slugFuncs = require("./slug-funcs");
@@ -36,26 +37,34 @@ function primitiveHandler(state, mixinOptions, finalCb) {
         return createSlug(state.ctx.instance, state, slugOptions, finalCb);
     }
 
-    // Try to find slug based on this key
-    var Slug = state.models.slug;
-    var query = {
-        where: {
-            baseKey: state.key,
-            parentModelName: state.modelName
-        },
-        fields: {
-            id: true,
-            linked: true,
-            slug:true
+    // Find the instances in this update and the slug based on this key
+    return state.model.find({
+        where: state.ctx.where,
+        include: {
+            relation: "slugs",
+            scope: {
+                where: {
+                    baseKey: state.key,
+                    parentModelName: state.modelName
+                },
+                fields: {
+                    id: true,
+                    linked: true,
+                    slug:true
+                },
+                limit: 1
+            }
         }
-    };
-    return Slug.findOne(query, function (err, slug) {
-        if (err) return finalCb(err);
-        if (!slug) {
-            console.log("no slug found with query");
-            return createSlug(state.ctx.instance, state, slugOptions, finalCb);
-        }
-        return updateSlug(slug, state.ctx.instance, state, slugOptions, finalCb);
+    }, function(err, modelInstances) {
+        if(err) return finalCb(err);
+
+        return async.each(modelInstances, function(modelInstance, instanceCb) {
+            var instanceJSON = modelInstance.toJSON();
+            if (instanceJSON.slugs < 1) {
+                return createSlug(modelInstance, state, slugOptions, finalCb);
+            }
+            return updateSlug(instanceJSON.slugs[0], state, slugOptions, finalCb);
+        }, finalCb);
     });
 }
 
@@ -83,7 +92,7 @@ function createSlug(instance, state, slugOptions, finalCb) {
     }, finalCb);
 }
 
-function updateSlug(slugInstance, instance, state, slugOptions, finalCb) {
+function updateSlug(slugInstance, state, slugOptions, finalCb) {
     var changes = {};
     var linked = slugInstance.linked || true;
 
@@ -120,7 +129,10 @@ function updateSlug(slugInstance, instance, state, slugOptions, finalCb) {
     if (Object.keys(changes).length < 1) {
         return finalCb();
     }
-    return slugInstance.updateAttributes(changes, finalCb);
+
+    // Apply updates
+    var Slug = state.models.slug;
+    return Slug.updateAll({ id: slugInstance.id}, changes, finalCb);
 }
 
 
