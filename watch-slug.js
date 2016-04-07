@@ -79,7 +79,7 @@ function createSlug(instance, state, slugOptions, finalCb) {
     // Add slug modifiers
     var prefixFunc = slugFuncs[slugOptions.prefixFunc];
     if (typeof prefixFunc === "function") {
-        slug = prefixFunc(instance) + slug;
+        slug = prefixFunc(state.requestData) + slug;
     } else if (typeof slugOptions.prefix === "string") {
         slug = slugOptions.prefix + slug;
     }
@@ -114,7 +114,7 @@ function updateSlug(slugInstance, state, slugOptions, finalCb) {
     // Add slug modifiers
     var prefixFunc = slugFuncs[slugOptions.prefixFunc];
     if (typeof prefixFunc === "function") {
-        slug += prefixFunc(instance);
+        slug += prefixFunc(state.requestData);
     } else if (typeof slugOptions.prefix === "string") {
         slug += slugOptions.prefix;
     }
