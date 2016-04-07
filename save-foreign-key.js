@@ -48,7 +48,7 @@ function primitiveHandler(state, mixinOptions, finalCb) {
     // Add slug modifiers
     var prefixFunc = slugFuncs[slugOptions.prefixFunc];
     if (typeof prefixFunc === "function") {
-        slug = prefixFunc(instance) + slug;
+        slug = prefixFunc(state.requestData) + slug;
     } else if (typeof slugOptions.prefix === "string") {
         slug = slugOptions.prefix + slug;
     }
