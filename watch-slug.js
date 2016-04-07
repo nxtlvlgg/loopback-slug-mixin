@@ -114,9 +114,9 @@ function updateSlug(slugInstance, state, slugOptions, finalCb) {
     // Add slug modifiers
     var prefixFunc = slugFuncs[slugOptions.prefixFunc];
     if (typeof prefixFunc === "function") {
-        slug += prefixFunc(state.requestData);
+        slug = prefixFunc(state.requestData) + slug;
     } else if (typeof slugOptions.prefix === "string") {
-        slug += slugOptions.prefix;
+        slug = slugOptions.prefix + slug;
     }
 
     if (linked && (slug !== slugInstance.slug)) {

@@ -56,7 +56,7 @@ function primitiveHandler(state, mixinOptions, finalCb) {
     // Update the slug with the new foreign key
     var update = {
         "$set": {}
-    }
+    };
     update["$set"][state.foreignKeyName] = state.ctx.instance.id;
 
     var Slug = state.models.slug;
