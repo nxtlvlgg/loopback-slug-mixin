@@ -13,6 +13,7 @@ mixinElems[mixinElems.length-1] = "package";
 var packagePath = mixinElems.join(path.sep);
 var destroyOnDeleteKey = require(packagePath).mixinName;
 
+var SLUG_PLURAL = "slugs";
 
 module.exports = function(Model, mixinOptions) {
 
@@ -25,14 +26,14 @@ module.exports = function(Model, mixinOptions) {
 
         // Add relation to slug model
         Model.hasMany(Slug, {
-            as: "slugs",
+            as: SLUG_PLURAL,
             foreignKey: foreignKeyName
         });
 
         // Add destroy-on-delete as mixin to parent Model
         Model.mixin(destroyOnDeleteKey);
-        Model.relations.slugs.options[destroyOnDeleteKey] = true;
-        Model.relations.slugs.model = Slug.definition.name;
+        Model.relations[SLUG_PLURAL].options[destroyOnDeleteKey] = true;
+        Model.relations[SLUG_PLURAL].model = Slug.definition.name;
 
         // Add properties and relations to slug model
         Slug.defineProperty(foreignKeyName, { type: ObjectId });
