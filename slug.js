@@ -32,6 +32,7 @@ module.exports = function(Model, mixinOptions) {
         // Add destroy-on-delete as mixin to parent Model
         Model.mixin(destroyOnDeleteKey);
         Model.relations.slugs.options[destroyOnDeleteKey] = true;
+        Model.relations.slugs.model = Slug.definition.name;
 
         // Add properties and relations to slug model
         Slug.defineProperty(foreignKeyName, { type: ObjectId });
