@@ -40,6 +40,7 @@ module.exports = function(Model, mixinOptions) {
             as: Model.definition.name,
             foreignKey: foreignKeyName
         });
+        Slug.relations[Model.definition.name].model = Slug.definition.name;
     });
 
 
