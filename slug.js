@@ -5,6 +5,9 @@ var reqCache = xloop.reqCache;
 var watchSlug =  require("./watch-slug");
 var saveForeignKey =  require("./save-foreign-key");
 
+var SLUG_MODEL_NAME = "slug";
+var SLUG_MODEL_PLURAL = "slugs";
+
 
 // Get package.json for loopback-destroy-on-delete-mixin
 var mixinPath = require.resolve("loopback-destroy-on-delete-mixin");
@@ -13,7 +16,7 @@ mixinElems[mixinElems.length-1] = "package";
 var packagePath = mixinElems.join(path.sep);
 var destroyOnDeleteKey = require(packagePath).mixinName;
 
-var SLUG_PLURAL = "slugs";
+
 
 module.exports = function(Model, mixinOptions) {
 
@@ -22,7 +25,7 @@ module.exports = function(Model, mixinOptions) {
 
     Model.dataSource.once("connected", function() {
         var ObjectId = Model.dataSource.connector.getDefaultIdType();
-        var Slug = Model.app.models.slug;
+        var Slug = Model.app.models[SLUG_MODEL_NAME];
 
         // Add relation to slug model
         Model.hasMany(Slug, {
@@ -32,8 +35,8 @@ module.exports = function(Model, mixinOptions) {
 
         // Add destroy-on-delete as mixin to parent Model
         Model.mixin(destroyOnDeleteKey);
-        Model.relations[SLUG_PLURAL].options[destroyOnDeleteKey] = true;
-        Model.relations[SLUG_PLURAL].model = Slug.definition.name;
+        Model.relations[SLUG_MODEL_PLURAL].options[destroyOnDeleteKey] = true;
+        Model.relations[SLUG_MODEL_PLURAL].model = Slug.definition.name;
 
         // Add properties and relations to slug model
         Slug.defineProperty(foreignKeyName, { type: ObjectId });
