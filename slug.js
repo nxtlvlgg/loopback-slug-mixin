@@ -29,7 +29,7 @@ module.exports = function(Model, mixinOptions) {
 
         // Add relation to slug model
         Model.hasMany(Slug, {
-            as: SLUG_PLURAL,
+            as: SLUG_MODEL_PLURAL,
             foreignKey: foreignKeyName
         });
 
