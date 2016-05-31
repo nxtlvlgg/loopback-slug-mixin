@@ -94,6 +94,7 @@ module.exports = function(Model, mixinOptions) {
                 relation: Model.definition.name,
                 scope: filter
             }
+            
         }, function(err, instance) {
             if(err) return finalCb(err);
             if(!instance || !instance[Model.definition.name]) {
@@ -111,7 +112,7 @@ module.exports = function(Model, mixinOptions) {
     };
 
 
-    Model.remoteMethod(
+    /*Model.remoteMethod(
         "findBySlug",
         {
             description: "Finds model by slug",
@@ -123,7 +124,7 @@ module.exports = function(Model, mixinOptions) {
             http: {verb: 'get'},
             isStatic: true
         }
-    );
+    );*/
 };
 
 
